@@ -1,0 +1,18 @@
+apiVersion: duck/v1
+kind: PrincipalList
+principals:
+  - name: rune
+    type: user
+    is_admin: true
+  - name: jacob
+    type: user
+    is_admin: true
+  - name: analyst-first-class
+    type: user
+    is_admin: false
+  - name: analyst-economy
+    type: user
+    is_admin: false
+  - name: data-viewer
+    type: user
+    is_admin: false

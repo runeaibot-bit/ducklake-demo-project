@@ -1,0 +1,16 @@
+apiVersion: duck/v1
+kind: RowFilterList
+filters:
+  # First-class analyst can only see first-class passengers
+  - name: first-class-only
+    filter_sql: "pclass = 1"
+    bindings:
+      - principal: analyst-first-class
+        principal_type: user
+
+  # Economy analyst can only see 2nd and 3rd class
+  - name: economy-only
+    filter_sql: "pclass IN (2, 3)"
+    bindings:
+      - principal: analyst-economy
+        principal_type: user

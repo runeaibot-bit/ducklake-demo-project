@@ -1,0 +1,37 @@
+apiVersion: duck/v1
+kind: GrantList
+grants:
+  # Admins get full access
+  - principal: admins
+    principal_type: group
+    securable_type: schema
+    securable: demo.titanic
+    privilege: ALL_PRIVILEGES
+
+  # Analysts can read the schema
+  - principal: analysts
+    principal_type: group
+    securable_type: schema
+    securable: demo.titanic
+    privilege: USAGE
+
+  # Analysts can SELECT on passengers table
+  - principal: analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.titanic.passengers
+    privilege: SELECT
+
+  # Viewers can read schema
+  - principal: viewers
+    principal_type: group
+    securable_type: schema
+    securable: demo.titanic
+    privilege: USAGE
+
+  # Viewers can SELECT on passengers table
+  - principal: viewers
+    principal_type: group
+    securable_type: table
+    securable: demo.titanic.passengers
+    privilege: SELECT

@@ -1,0 +1,24 @@
+apiVersion: duck/v1
+kind: GroupList
+groups:
+  - name: admins
+    description: "Platform administrators"
+    members:
+      - name: rune
+        type: user
+      - name: jacob
+        type: user
+  - name: analysts
+    description: "Data analysts with filtered access"
+    members:
+      - name: analyst-first-class
+        type: user
+      - name: analyst-economy
+        type: user
+  - name: viewers
+    description: "Read-only users with masked PII"
+    members:
+      - name: data-viewer
+        type: user
+      - name: analysts
+        type: group

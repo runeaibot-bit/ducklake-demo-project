@@ -1,0 +1,10 @@
+apiVersion: duck/v1
+kind: Catalog
+metadata:
+  name: demo
+  deletion_protection: false
+spec:
+  metastore_type: sqlite
+  dsn: /tmp/ducklake-demo.sqlite
+  data_path: /tmp/ducklake-demo-data/
+  is_default: true
