@@ -37,7 +37,21 @@ duck apply --config-dir duck-config --auto-approve
 
 # Export current state
 duck export --config-dir duck-config
+
+# One-shot retest helper (validate + plan + apply + checks)
+./scripts/retest-demo.sh
 ```
+
+## Known Current Blockers (platform-side)
+
+At the moment this demo is partially blocked by open platform bugs in `Yacobolo/ducklake-dataplatform`:
+
+- **#141**: `duck apply` resource index is stale after creating schema/table in the same run
+  - downstream resources (grants/filters/masks/tag assignments) fail to resolve
+- **#147**: query path cannot resolve table after apply
+  - `SELECT ... FROM demo.titanic.passengers` returns `catalog lookup: table "passengers" not found in catalog`
+
+The config in this repo is valid, but full end-to-end apply+query success depends on those fixes landing upstream.
 
 ## Requirements
 
