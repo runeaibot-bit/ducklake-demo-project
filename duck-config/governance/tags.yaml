@@ -10,7 +10,7 @@ tags:
 assignments:
   - tag: "classification:pii"
     securable_type: table
-    securable: demo.titanic.passengers
+    securable: demo.bronze.ratings_raw
   - tag: "domain:analytics"
     securable_type: schema
-    securable: demo.titanic
+    securable: demo.gold

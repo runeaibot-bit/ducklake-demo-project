@@ -8,17 +8,24 @@ groups:
         type: user
       - name: jacob
         type: user
-  - name: analysts
-    description: "Data analysts with filtered access"
+  - name: content_analysts
+    description: "Content analysts for movie metadata and performance"
     members:
-      - name: analyst-first-class
+      - name: alicia-content
         type: user
-      - name: analyst-economy
+      - name: morgan-content
+        type: user
+  - name: marketing_analysts
+    description: "Marketing analysts for campaign and audience trend insights"
+    members:
+      - name: devin-marketing
+        type: user
+      - name: riley-marketing
         type: user
   - name: viewers
-    description: "Read-only users with masked PII"
+    description: "Read-only users with masked user identifiers"
     members:
       - name: data-viewer
         type: user
-      - name: analysts
-        type: group
+      - name: analyst-viewer
+        type: user

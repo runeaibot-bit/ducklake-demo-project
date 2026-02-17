@@ -1,0 +1,19 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: ratings_raw
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Raw MovieLens ratings stream"
+  columns:
+    - name: user_id
+      type: BIGINT
+    - name: movie_id
+      type: BIGINT
+    - name: rating
+      type: DOUBLE
+    - name: timestamp
+      type: BIGINT
+    - name: ingested_at
+      type: TIMESTAMP

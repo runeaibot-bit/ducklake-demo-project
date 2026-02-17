@@ -1,0 +1,17 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: movies
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Curated movie dimension"
+  columns:
+    - name: movie_id
+      type: BIGINT
+    - name: title
+      type: VARCHAR
+    - name: genres
+      type: VARCHAR
+    - name: release_year
+      type: INTEGER

@@ -7,12 +7,28 @@ principals:
   - name: jacob
     type: user
     is_admin: true
+  - name: alicia-content
+    type: user
+    is_admin: false
+  - name: morgan-content
+    type: user
+    is_admin: false
+  - name: devin-marketing
+    type: user
+    is_admin: false
+  - name: riley-marketing
+    type: user
+    is_admin: false
+  - name: data-viewer
+    type: user
+    is_admin: false
+  - name: analyst-viewer
+    type: user
+    is_admin: false
+  # Legacy Titanic demo personas preserved for compatibility with existing table-level examples
   - name: analyst-first-class
     type: user
     is_admin: false
   - name: analyst-economy
-    type: user
-    is_admin: false
-  - name: data-viewer
     type: user
     is_admin: false

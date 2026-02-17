@@ -1,0 +1,17 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: ratings
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Conformed ratings model used by downstream marts"
+  columns:
+    - name: user_id
+      type: BIGINT
+    - name: movie_id
+      type: BIGINT
+    - name: rating
+      type: DOUBLE
+    - name: rating_ts
+      type: TIMESTAMP

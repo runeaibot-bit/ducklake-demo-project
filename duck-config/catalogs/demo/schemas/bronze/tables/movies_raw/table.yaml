@@ -1,0 +1,19 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: movies_raw
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Raw MovieLens movie metadata (raw ingest)"
+  columns:
+    - name: movie_id
+      type: BIGINT
+    - name: title
+      type: VARCHAR
+    - name: genres
+      type: VARCHAR
+    - name: source_file
+      type: VARCHAR
+    - name: ingested_at
+      type: TIMESTAMP

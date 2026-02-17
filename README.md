@@ -1,61 +1,67 @@
-# DuckLake Demo Project — Titanic Analytics
+# DuckFlix Demo Project
 
-A demo data project built with the [DuckDB Data Platform](https://github.com/Yacobolo/ducklake-dataplatform), showcasing terraform-style declarative configuration for data governance.
+A short, script-first DuckLake demo using the **MovieLens** dataset. It applies DuckDB governance config (schemas, roles, grants, row filters, and masking) and demonstrates an end-to-end movie analytics workflow.
 
 ## What this demonstrates
 
-- **Declarative config** — all schemas, tables, principals, groups, grants, and security policies are defined in YAML and version-controlled
-- **RBAC** — role-based access control with principals and groups
-- **Row-Level Security** — analysts can only see passenger data for their assigned class
-- **Column Masking** — PII fields (names, ticket numbers) are masked for non-admin users
-- **Audit Trail** — all access is logged
+- End-to-end **declarative** DuckDB governance setup for a real analytics use case.
+- Practical **layered architecture** with Bronze → Silver → Gold tables.
+- Reproducible, script-driven flow for fetching raw source data, loading cataloged tables, and validating results.
+- Security controls including **RBAC**, **row-level filters**, and **column masking**.
 
-## Project Structure
+## Architecture (bronze / silver / gold)
 
-```
-duck-config/
-├── catalogs.yaml          # DuckLake catalog registration
-├── schemas.yaml           # Schema definitions
-├── principals.yaml        # User identities
-├── groups.yaml            # Role groups (admin, analyst, viewer)
-├── grants.yaml            # Permission grants per group
-├── row_filters.yaml       # Row-level security policies
-└── column_masks.yaml      # Column masking rules
-```
+- **bronze**
+  - `bronze.movies_raw`
+  - `bronze.ratings_raw`
+  - `bronze.tags_raw`
+  - `bronze.links_raw`
+- **silver**
+  - `silver.movies`
+  - `silver.ratings`
+  - `silver.tags`
+  - `silver.genres_bridge`
+- **gold**
+  - `gold.mart_title_performance`
+  - `gold.mart_genre_trends`
+  - `gold.mart_user_taste_segments`
+  - `gold.mart_recommendation_candidates`
 
-## Usage
+## Quickstart
 
-```bash
-# Validate configuration
-duck validate --config-dir duck-config
+1. **Fetch the source data**
+   ```bash
+   ./scripts/fetch-movielens.sh
+   ```
 
-# Preview changes (terraform plan)
-duck plan --config-dir duck-config
+2. **Apply governance configuration**
+   ```bash
+   duck validate --config-dir duck-config
+   duck plan --config-dir duck-config
+   duck apply --config-dir duck-config --auto-approve
+   ```
 
-# Apply changes (terraform apply)
-duck apply --config-dir duck-config --auto-approve
+3. **Load DuckFlix data**
+   ```bash
+   ./scripts/load-duckflix.sh
+   ```
 
-# Export current state
-duck export --config-dir duck-config
+4. **Verify tables / queries / security expectations**
+   ```bash
+   ./scripts/verify-duckflix.sh
+   ```
 
-# One-shot retest helper (validate + plan + apply + checks)
-./scripts/retest-demo.sh
-```
+## Example business questions
 
-## Known Current Blockers (platform-side)
+- Which movie genres are trending over time?
+- Which titles have the highest conversion from short to repeat ratings?
+- Which users are high-volume raters in specific cohorts?
+- Which segments have the strongest recommendation signal by genre?
+- Are any PII-like user fields hidden for non-admin roles?
 
-At the moment this demo is partially blocked by open platform bugs in `Yacobolo/ducklake-dataplatform`:
+## Known blockers
 
-- **#147**: query path cannot resolve table after apply
-  - `duck query execute --sql "SELECT COUNT(*) AS cnt FROM demo.titanic.passengers"`
-  - fails with: `catalog lookup: table "passengers" not found in catalog`
-- **#196**: column-mask apply can report `resource already exists` and then fail binding lookup in the same apply run
-  - `create column-mask ".../mask-name" ... API error (HTTP 500): resource already exists`
-  - `create column-mask-binding ".../mask-name->group:viewers" ... column mask ... not found in index`
+- **#147**: Query path issues can still appear after apply in some platform states (for example, catalog/table resolution timing can fail when querying `demo.duckflix` objects immediately).
+- **#196**: Column-mask creation and mask-binding application may intermittently hit `resource already exists` semantics and block a clean single-run apply.
 
-The config in this repo is valid (`duck validate` passes), but full end-to-end apply+query success depends on those upstream fixes landing.
-
-## Requirements
-
-- [DuckDB Data Platform](https://github.com/Yacobolo/ducklake-dataplatform) server running
-- `duck` CLI binary
+The repo configuration is still valid and passes standard validation, but a fully clean apply + immediate query cycle may depend on upstream fixes in `Yacobolo/ducklake-dataplatform`.

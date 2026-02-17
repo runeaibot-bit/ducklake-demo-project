@@ -1,0 +1,13 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: genres_bridge
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Normalized genre bridge for many-to-many movie-genre mapping"
+  columns:
+    - name: movie_id
+      type: BIGINT
+    - name: genre
+      type: VARCHAR

@@ -1,0 +1,10 @@
+apiVersion: duck/v1
+kind: ColumnMaskList
+masks:
+  - name: ratings-user-id-anon
+    column_name: user_id
+    mask_expression: "0"
+    bindings:
+      - principal: viewers
+        principal_type: group
+        see_original: false

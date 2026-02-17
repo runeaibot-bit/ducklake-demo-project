@@ -1,0 +1,11 @@
+apiVersion: duck/v1
+kind: Schema
+metadata:
+  name: gold
+spec:
+  comment: "MovieLens curated business-ready marts"
+  owner: admins
+  properties:
+    domain: movielens
+    tier: gold
+    confidence: trusted

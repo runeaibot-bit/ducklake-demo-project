@@ -1,0 +1,14 @@
+apiVersion: duck/v1
+kind: RowFilterList
+filters:
+  - name: ratings-cohort-content-analyst
+    filter_sql: "user_id % 2 = 0"
+    bindings:
+      - principal: content_analysts
+        principal_type: group
+
+  - name: ratings-cohort-marketing-analyst
+    filter_sql: "user_id % 2 = 1"
+    bindings:
+      - principal: marketing_analysts
+        principal_type: group

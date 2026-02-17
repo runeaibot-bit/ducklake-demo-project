@@ -1,0 +1,19 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: mart_genre_trends
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Genre trend mart for marketing and content planning"
+  columns:
+    - name: genre
+      type: VARCHAR
+    - name: month_bucket
+      type: DATE
+    - name: avg_rating
+      type: DOUBLE
+    - name: active_users
+      type: BIGINT
+    - name: last_refreshed_at
+      type: TIMESTAMP

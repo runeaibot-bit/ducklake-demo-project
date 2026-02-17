@@ -1,37 +1,162 @@
 apiVersion: duck/v1
 kind: GrantList
 grants:
-  # Admins get full access
+  # Admins
   - principal: admins
     principal_type: group
     securable_type: schema
-    securable: demo.titanic
+    securable: demo.bronze
     privilege: ALL_PRIVILEGES
 
-  # Analysts can read the schema
-  - principal: analysts
+  - principal: admins
     principal_type: group
     securable_type: schema
-    securable: demo.titanic
+    securable: demo.silver
+    privilege: ALL_PRIVILEGES
+
+  - principal: admins
+    principal_type: group
+    securable_type: schema
+    securable: demo.gold
+    privilege: ALL_PRIVILEGES
+
+  # Content analysts
+  - principal: content_analysts
+    principal_type: group
+    securable_type: schema
+    securable: demo.bronze
     privilege: USAGE
 
-  # Analysts can SELECT on passengers table
-  - principal: analysts
+  - principal: content_analysts
+    principal_type: group
+    securable_type: schema
+    securable: demo.silver
+    privilege: USAGE
+
+  - principal: content_analysts
+    principal_type: group
+    securable_type: schema
+    securable: demo.gold
+    privilege: USAGE
+
+  - principal: content_analysts
     principal_type: group
     securable_type: table
-    securable: demo.titanic.passengers
+    securable: demo.bronze.ratings_raw
     privilege: SELECT
 
-  # Viewers can read schema
+  - principal: content_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.silver.movies
+    privilege: SELECT
+
+  - principal: content_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.silver.ratings
+    privilege: SELECT
+
+  - principal: content_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.silver.genres_bridge
+    privilege: SELECT
+
+  - principal: content_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.gold.mart_title_performance
+    privilege: SELECT
+
+  - principal: content_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.gold.mart_genre_trends
+    privilege: SELECT
+
+  # Marketing analysts
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: schema
+    securable: demo.bronze
+    privilege: USAGE
+
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: schema
+    securable: demo.silver
+    privilege: USAGE
+
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: schema
+    securable: demo.gold
+    privilege: USAGE
+
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.bronze.ratings_raw
+    privilege: SELECT
+
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.silver.movies
+    privilege: SELECT
+
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.silver.ratings
+    privilege: SELECT
+
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.gold.mart_title_performance
+    privilege: SELECT
+
+  - principal: marketing_analysts
+    principal_type: group
+    securable_type: table
+    securable: demo.gold.mart_genre_trends
+    privilege: SELECT
+
+  # Viewers
   - principal: viewers
     principal_type: group
     securable_type: schema
-    securable: demo.titanic
+    securable: demo.silver
     privilege: USAGE
 
-  # Viewers can SELECT on passengers table
+  - principal: viewers
+    principal_type: group
+    securable_type: schema
+    securable: demo.gold
+    privilege: USAGE
+
   - principal: viewers
     principal_type: group
     securable_type: table
-    securable: demo.titanic.passengers
+    securable: demo.silver.movies
+    privilege: SELECT
+
+  - principal: viewers
+    principal_type: group
+    securable_type: table
+    securable: demo.silver.ratings
+    privilege: SELECT
+
+  - principal: viewers
+    principal_type: group
+    securable_type: table
+    securable: demo.gold.mart_title_performance
+    privilege: SELECT
+
+  - principal: viewers
+    principal_type: group
+    securable_type: table
+    securable: demo.gold.mart_genre_trends
     privilege: SELECT

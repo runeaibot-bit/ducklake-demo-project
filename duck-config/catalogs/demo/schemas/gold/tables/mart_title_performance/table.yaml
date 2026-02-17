@@ -1,0 +1,19 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: mart_title_performance
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Title-level performance mart for recommendations and ranking"
+  columns:
+    - name: movie_id
+      type: BIGINT
+    - name: title
+      type: VARCHAR
+    - name: avg_rating
+      type: DOUBLE
+    - name: rating_count
+      type: BIGINT
+    - name: last_refreshed_at
+      type: TIMESTAMP

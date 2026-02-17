@@ -1,0 +1,19 @@
+apiVersion: duck/v1
+kind: Table
+metadata:
+  name: tags_raw
+  deletion_protection: false
+spec:
+  table_type: MANAGED
+  comment: "Raw MovieLens user tags"
+  columns:
+    - name: user_id
+      type: BIGINT
+    - name: movie_id
+      type: BIGINT
+    - name: tag
+      type: VARCHAR
+    - name: timestamp
+      type: BIGINT
+    - name: ingested_at
+      type: TIMESTAMP
