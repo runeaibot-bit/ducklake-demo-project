@@ -46,12 +46,14 @@ duck export --config-dir duck-config
 
 At the moment this demo is partially blocked by open platform bugs in `Yacobolo/ducklake-dataplatform`:
 
-- **#141**: `duck apply` resource index is stale after creating schema/table in the same run
-  - downstream resources (grants/filters/masks/tag assignments) fail to resolve
 - **#147**: query path cannot resolve table after apply
-  - `SELECT ... FROM demo.titanic.passengers` returns `catalog lookup: table "passengers" not found in catalog`
+  - `duck query execute --sql "SELECT COUNT(*) AS cnt FROM demo.titanic.passengers"`
+  - fails with: `catalog lookup: table "passengers" not found in catalog`
+- **#196**: column-mask apply can report `resource already exists` and then fail binding lookup in the same apply run
+  - `create column-mask ".../mask-name" ... API error (HTTP 500): resource already exists`
+  - `create column-mask-binding ".../mask-name->group:viewers" ... column mask ... not found in index`
 
-The config in this repo is valid, but full end-to-end apply+query success depends on those fixes landing upstream.
+The config in this repo is valid (`duck validate` passes), but full end-to-end apply+query success depends on those upstream fixes landing.
 
 ## Requirements
 
