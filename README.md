@@ -1,67 +1,50 @@
-# DuckFlix Demo Project
+# ducklake-demo-project
 
-A short, script-first DuckLake demo using the **MovieLens** dataset. It applies DuckDB governance config (schemas, roles, grants, row filters, and masking) and demonstrates an end-to-end movie analytics workflow.
+Blueprint-aligned demo repo based on:
+`Yacobolo/ducklake-dataplatform/examples/showcase-movielens`
 
-## What this demonstrates
+## Primary entrypoint
 
-- End-to-end **declarative** DuckDB governance setup for a real analytics use case.
-- Practical **layered architecture** with Bronze → Silver → Gold tables.
-- Reproducible, script-driven flow for fetching raw source data, loading cataloged tables, and validating results.
-- Security controls including **RBAC**, **row-level filters**, and **column masking**.
+Use the canonical showcase under:
 
-## Architecture (bronze / silver / gold)
+- `examples/showcase-movielens/`
 
-- **bronze**
-  - `bronze.movies_raw`
-  - `bronze.ratings_raw`
-  - `bronze.tags_raw`
-  - `bronze.links_raw`
-- **silver**
-  - `silver.movies`
-  - `silver.ratings`
-  - `silver.tags`
-  - `silver.genres_bridge`
-- **gold**
-  - `gold.mart_title_performance`
-  - `gold.mart_genre_trends`
-  - `gold.mart_user_taste_segments`
-  - `gold.mart_recommendation_candidates`
+This includes declarative config, seed data, and runnable scripts for:
+
+- ingestion API loading
+- bronze/silver/gold model runs
+- notebook + pipeline execution
+- RBAC / row filters / column masking example resources
 
 ## Quickstart
 
-1. **Fetch the source data**
-   ```bash
-   ./scripts/fetch-movielens.sh
-   ```
+Prereqs:
 
-2. **Apply governance configuration**
-   ```bash
-   duck validate --config-dir duck-config
-   duck plan --config-dir duck-config
-   duck apply --config-dir duck-config --auto-approve
-   ```
+- DuckLake server running
+- `duck` CLI available in `PATH`
+- `duckdb` + `sqlite3` installed
 
-3. **Load DuckFlix data**
-   ```bash
-   ./scripts/load-duckflix.sh
-   ```
+Then from repo root:
 
-4. **Verify tables / queries / security expectations**
-   ```bash
-   ./scripts/verify-duckflix.sh
-   ```
+```bash
+export DUCK_HOST="http://localhost:8080"
+export DUCK_API_KEY="showcase-local-admin-key"
 
-## Example business questions
+# one-time bootstrap of admin key in metadata sqlite
+API_KEY="$DUCK_API_KEY" examples/showcase-movielens/scripts/bootstrap_admin_key.sh
 
-- Which movie genres are trending over time?
-- Which titles have the highest conversion from short to repeat ratings?
-- Which users are high-volume raters in specific cohorts?
-- Which segments have the strongest recommendation signal by genre?
-- Are any PII-like user fields hidden for non-admin roles?
+# full showcase flow
+DUCK_API_KEY="$DUCK_API_KEY" DUCK_HOST="$DUCK_HOST" \
+  examples/showcase-movielens/scripts/run_demo_flow.sh
+```
 
-## Known blockers
+## Compatibility wrappers
 
-- **#147**: Query path issues can still appear after apply in some platform states (for example, catalog/table resolution timing can fail when querying `demo.duckflix` objects immediately).
-- **#196**: Column-mask creation and mask-binding application may intermittently hit `resource already exists` semantics and block a clean single-run apply.
+Top-level scripts remain for convenience and now delegate to the canonical showcase flow where relevant:
 
-The repo configuration is still valid and passes standard validation, but a fully clean apply + immediate query cycle may depend on upstream fixes in `Yacobolo/ducklake-dataplatform`.
+- `scripts/load-duckflix.sh`
+- `scripts/verify-duckflix.sh`
+
+## Source blueprint
+
+- <https://github.com/Yacobolo/ducklake-dataplatform/tree/main/examples>
