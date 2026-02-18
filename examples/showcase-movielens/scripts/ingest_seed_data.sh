@@ -27,7 +27,7 @@ fi
 mkdir -p "$LANDING_DIR"
 
 duck() {
-	"$DUCK_BIN" --host "$DUCK_HOST" --token '' --api-key "$API_KEY" "$@"
+	command "$DUCK_BIN" --host "$DUCK_HOST" --token '' --api-key "$API_KEY" "$@"
 }
 
 echo "Preparing deterministic parquet files in $LANDING_DIR"

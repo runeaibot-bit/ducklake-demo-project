@@ -18,7 +18,7 @@ if ! command -v "$DUCK_BIN" >/dev/null 2>&1; then
 fi
 
 duck() {
-  "$DUCK_BIN" --host "$DUCK_HOST" --token '' --api-key "$DUCK_API_KEY" "$@"
+  command "$DUCK_BIN" --host "$DUCK_HOST" --token '' --api-key "$DUCK_API_KEY" "$@"
 }
 
 check_query() {
