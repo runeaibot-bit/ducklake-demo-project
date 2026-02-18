@@ -40,13 +40,12 @@ Movie analytics showcase using MovieLens (+ optional IMDb enrichment).
 - Row filters: cohort/date or region segment constraints
 - Tags: pii, internal, public, recommendation_feature
 
+## Current Blocker (2026-02-18)
+- End-to-end retest is currently blocked at `duck plan`/`duck apply` with local dev auth returning HTTP 401.
+- Repro path: `./scripts/retest-demo.sh` (validate passes; plan/apply fail with unauthorized).
+- Tracked in platform repo: https://github.com/Yacobolo/ducklake-dataplatform/issues/215
+
 ## Immediate Next Steps
-1. Add DuckFlix directory structure under duck-config/catalogs/demo/schemas/
-2. Add schema and table YAMLs for bronze/silver/gold core tables
-3. Add security principals/groups/grants for DuckFlix roles
-4. Add row filter + column mask examples on ratings/user fields
-5. Add scripts:
-   - scripts/fetch-movielens.sh
-   - scripts/load-duckflix.sh
-   - scripts/verify-duckflix.sh
-6. Update README with DuckFlix quickstart and expected query outputs
+1. Unblock local dev auth in platform (issue #215) or run demo via API key/OIDC-enabled environment.
+2. Once unblocked, rerun `./scripts/retest-demo.sh` and continue silver/gold verification.
+3. Extend demo docs with before/after screenshots and expected query outputs for non-technical walkthrough.
