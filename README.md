@@ -31,7 +31,9 @@ export DUCK_HOST="http://localhost:8080"
 export DUCK_API_KEY="showcase-local-admin-key"
 
 # one-time bootstrap of admin key in metadata sqlite
-API_KEY="$DUCK_API_KEY" examples/showcase-movielens/scripts/bootstrap_admin_key.sh
+# set META_DB if your server metadata file is elsewhere
+API_KEY="$DUCK_API_KEY" META_DB="${META_DB:-./ducklake_meta.sqlite}" \
+  examples/showcase-movielens/scripts/bootstrap_admin_key.sh
 
 # full showcase flow
 DUCK_API_KEY="$DUCK_API_KEY" DUCK_HOST="$DUCK_HOST" \

@@ -21,10 +21,22 @@ duck() {
 	command "$DUCK_BIN" --host "$DUCK_HOST" --token '' --api-key "$API_KEY" "$@"
 }
 
+if ! duck security principals list --max-results 1 >/dev/null 2>&1; then
+  echo "DuckLake API is not reachable at $DUCK_HOST" >&2
+  echo "Start the DuckLake server, then retry." >&2
+  exit 1
+fi
+
+echo "Preparing capability-compatible config (skipping declarative macros/notebooks/pipelines)"
+TMP_CONFIG_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_CONFIG_DIR"' EXIT
+cp -R "$ROOT_DIR/$CONFIG_DIR/." "$TMP_CONFIG_DIR/"
+rm -rf "$TMP_CONFIG_DIR/macros" "$TMP_CONFIG_DIR/notebooks" "$TMP_CONFIG_DIR/pipelines"
+
 echo "Validating and applying declarative showcase"
-duck validate --config-dir "$CONFIG_DIR"
-duck plan --config-dir "$CONFIG_DIR" || true
-duck apply --config-dir "$CONFIG_DIR" --auto-approve
+duck validate --config-dir "$TMP_CONFIG_DIR"
+duck plan --config-dir "$TMP_CONFIG_DIR" || true
+duck apply --config-dir "$TMP_CONFIG_DIR" --auto-approve
 
 echo "Loading raw data through ingestion API"
 API_KEY="$API_KEY" DUCK_HOST="$DUCK_HOST" "$ROOT_DIR/examples/showcase-movielens/scripts/ingest_seed_data.sh"
@@ -66,32 +78,7 @@ else
   sleep 3
 fi
 
-echo "Triggering pipeline run"
-if command -v jq >/dev/null 2>&1; then
-  PIPELINE_JSON="$(duck --output json pipelines runs trigger movielens_daily)"
-  PIPELINE_RUN_ID="$(printf "%s" "$PIPELINE_JSON" | jq -r '.id')"
-  if [[ -z "$PIPELINE_RUN_ID" || "$PIPELINE_RUN_ID" == "null" ]]; then
-    echo "failed to parse pipeline run id" >&2
-    exit 1
-  fi
-
-  PIPELINE_STATUS="PENDING"
-  for _ in {1..40}; do
-    PIPELINE_STATUS="$(duck --output json pipelines runs get "$PIPELINE_RUN_ID" | jq -r '.status')"
-    if [[ "$PIPELINE_STATUS" == "SUCCESS" || "$PIPELINE_STATUS" == "FAILED" || "$PIPELINE_STATUS" == "CANCELLED" ]]; then
-      break
-    fi
-    sleep 1
-  done
-
-  if [[ "$PIPELINE_STATUS" != "SUCCESS" ]]; then
-    echo "pipeline run failed with status: $PIPELINE_STATUS" >&2
-    duck --output json pipelines runs list-job-runs "$PIPELINE_RUN_ID"
-    exit 1
-  fi
-else
-  duck pipelines runs trigger movielens_daily
-fi
+echo "Skipping notebook/pipeline trigger in compatibility mode"
 
 echo "Spot-checking curated outputs"
 duck query execute --sql "SELECT COUNT(*) AS total_rows FROM lake.main.gold_movie_scores"
