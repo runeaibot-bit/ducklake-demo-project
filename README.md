@@ -46,6 +46,7 @@ Top-level scripts remain for convenience and now delegate to the canonical showc
 
 - `scripts/load-duckflix.sh`
 - `scripts/verify-duckflix.sh`
+- `scripts/nightly_demo_check.sh` (validate/plan/apply + query smoke checks, writes logs to `.artifacts/nightly/`)
 
 ## Source blueprint
 
