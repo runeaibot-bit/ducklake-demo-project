@@ -34,6 +34,13 @@ log=".artifacts/nightly/demo-flow-${stamp}.log"
   API_KEY="$DUCK_API_KEY" META_DB="$META_DB" \
     examples/showcase-movielens/scripts/bootstrap_admin_key.sh
 
+  if ! curl -fsS "$DUCK_HOST/healthz" >/dev/null 2>&1; then
+    echo "[nightly] blocker: DuckLake API unreachable at $DUCK_HOST"
+    echo "[nightly] likely known platform blocker:"
+    echo "[nightly] https://github.com/Yacobolo/ducklake-dataplatform/issues/231"
+    exit 1
+  fi
+
   DUCK_API_KEY="$DUCK_API_KEY" DUCK_HOST="$DUCK_HOST" \
     examples/showcase-movielens/scripts/run_demo_flow.sh
 

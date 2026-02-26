@@ -48,6 +48,17 @@ Top-level scripts remain for convenience and now delegate to the canonical showc
 - `scripts/verify-duckflix.sh`
 - `scripts/nightly_demo_check.sh` (validate/plan/apply + query smoke checks, writes logs to `.artifacts/nightly/`)
 
+## Troubleshooting
+
+If `scripts/nightly_demo_check.sh` fails with an API-unreachable error, verify the local DuckLake server first:
+
+```bash
+curl -f http://localhost:8080/healthz
+```
+
+Known platform blocker (server build drift on main):
+- <https://github.com/Yacobolo/ducklake-dataplatform/issues/231>
+
 ## Source blueprint
 
 - <https://github.com/Yacobolo/ducklake-dataplatform/tree/main/examples>
