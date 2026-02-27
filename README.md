@@ -56,8 +56,9 @@ If `scripts/nightly_demo_check.sh` fails with an API-unreachable error, verify t
 curl -f http://localhost:8080/healthz
 ```
 
-Known platform blocker (server build drift on main):
-- <https://github.com/Yacobolo/ducklake-dataplatform/issues/231>
+Known platform blockers:
+- API unreachable / server build drift on main: <https://github.com/Yacobolo/ducklake-dataplatform/issues/231>
+- Declarative apply fails on models (`resource kind not yet implemented`): <https://github.com/Yacobolo/ducklake-dataplatform/issues/257>
 
 ## Source blueprint
 

@@ -11,6 +11,18 @@ export DUCK_HOST="${DUCK_HOST:-http://localhost:8080}"
 export DUCK_API_KEY="${DUCK_API_KEY:-showcase-local-admin-key}"
 export META_DB="${META_DB:-$ROOT_DIR/ducklake_meta.sqlite}"
 
+# If a DuckLake server is already running, prefer its configured metadata DB.
+# This avoids bootstrap/auth mismatches when server state lives outside repo root.
+if [[ -z "${META_DB_OVERRIDE:-}" ]]; then
+  server_pid="$(ss -ltnp 2>/dev/null | awk '/:8080/ {print $NF}' | sed -E 's/.*pid=([0-9]+).*/\1/' | head -n1 || true)"
+  if [[ -n "$server_pid" && -r "/proc/$server_pid/environ" ]]; then
+    server_meta_db="$(tr '\0' '\n' < "/proc/$server_pid/environ" | awk -F= '/^META_DB_PATH=/{print $2}' | head -n1 || true)"
+    if [[ -n "$server_meta_db" && -f "$server_meta_db" ]]; then
+      META_DB="$server_meta_db"
+    fi
+  fi
+fi
+
 mkdir -p .artifacts/nightly
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 log=".artifacts/nightly/demo-flow-${stamp}.log"
