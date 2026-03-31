@@ -1,27 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Verify DuckFlix DuckLake objects and data with PASS/FAIL output.
-#
-# Usage:
-#   DUCK_TOKEN="<jwt>" [DUCK_HOST="http://localhost:8080"] ./scripts/verify-duckflix.sh
-#
-# What it checks:
-#   - Bronze tables contain data
-#   - Silver tables are populated
-#   - Gold tables have aggregate output
-#   - Governance-oriented column check (PII/hash readiness in silver.users)
+# Verification for blueprint-aligned showcase outputs.
 
 DUCK_HOST="${DUCK_HOST:-http://localhost:8080}"
-DUCK_TOKEN="${DUCK_TOKEN:?DUCK_TOKEN env var must be set (no hardcoded secret allowed)}"
+DUCK_BIN="${DUCK_BIN:-duck}"
+DUCK_API_KEY="${DUCK_API_KEY:-${API_KEY:-}}"
 
-if ! command -v duck >/dev/null 2>&1; then
-  echo "ERROR: 'duck' CLI not found in PATH" >&2
+if [[ -z "$DUCK_API_KEY" ]]; then
+  echo "ERROR: set DUCK_API_KEY or API_KEY" >&2
   exit 1
 fi
 
-run_duck() {
-  duck --host "$DUCK_HOST" --token "$DUCK_TOKEN" query execute --sql "$1"
+if ! command -v "$DUCK_BIN" >/dev/null 2>&1; then
+  echo "ERROR: duck CLI not found: $DUCK_BIN" >&2
+  exit 1
+fi
+
+duck() {
+  command "$DUCK_BIN" --host "$DUCK_HOST" --token '' --api-key "$DUCK_API_KEY" "$@"
 }
 
 check_query() {
@@ -29,42 +26,24 @@ check_query() {
   local sql="$2"
   local result
 
-  if ! result="$(run_duck "$sql")"; then
-    echo "FAIL | $description | duck query failed"
+  if ! result="$(duck query execute --sql "$sql")"; then
+    echo "FAIL | $description | query failed"
     return 1
   fi
 
   if echo "$result" | grep -Eq '(^|[^A-Za-z0-9_])PASS([^A-Za-z0-9_]|$)'; then
     echo "PASS | $description"
     return 0
-  elif echo "$result" | grep -Eq '(^|[^A-Za-z0-9_])FAIL([^A-Za-z0-9_]|$)'; then
-    echo "FAIL | $description | check condition failed"
-    return 1
-  else
-    echo "PASS | $description | (query executed, contains: $(echo "$result" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' | cut -c 1-120) )"
-    return 0
   fi
+
+  echo "FAIL | $description"
+  return 1
 }
 
-check_query "Bronze movies loaded" "SELECT CASE WHEN (SELECT COUNT(*) FROM demo.bronze.movies_raw) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
-check_query "Bronze ratings loaded" "SELECT CASE WHEN (SELECT COUNT(*) FROM demo.bronze.ratings_raw) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
-check_query "Silver ratings transformed" "SELECT CASE WHEN (SELECT COUNT(*) FROM demo.silver.ratings) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
-check_query "Gold title performance built" "SELECT CASE WHEN (SELECT COUNT(*) FROM demo.gold.mart_title_performance) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
-check_query "Gold genre trend built" "SELECT CASE WHEN (SELECT COUNT(*) FROM demo.gold.mart_genre_trends) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
+check_query "raw_movies loaded" "SELECT CASE WHEN (SELECT COUNT(*) FROM lake.main.raw_movies) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
+check_query "raw_users loaded" "SELECT CASE WHEN (SELECT COUNT(*) FROM lake.main.raw_users) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
+check_query "raw_ratings loaded" "SELECT CASE WHEN (SELECT COUNT(*) FROM lake.main.raw_ratings) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
+check_query "gold_movie_scores built" "SELECT CASE WHEN (SELECT COUNT(*) FROM lake.main.gold_movie_scores) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
+check_query "gold_user_engagement built" "SELECT CASE WHEN (SELECT COUNT(*) FROM lake.main.gold_user_engagement) > 0 THEN 'PASS' ELSE 'FAIL' END AS result"
 
-# Governance-oriented check note:
-# We keep user_id as a governed field in bronze/silver and enforce access policies via declarative config.
-check_query "Governance-oriented check: user_id column present in bronze and silver ratings" "
-SELECT CASE
-         WHEN EXISTS (
-           SELECT 1 FROM information_schema.columns
-           WHERE table_schema = 'bronze' AND table_name = 'ratings_raw' AND column_name = 'user_id'
-         )
-         AND EXISTS (
-           SELECT 1 FROM information_schema.columns
-           WHERE table_schema = 'silver' AND table_name = 'ratings' AND column_name = 'user_id'
-         )
-         THEN 'PASS' ELSE 'FAIL' END AS result
-"
-
-echo "verify-duckflix.sh complete."
+echo "verify-duckflix.sh complete"

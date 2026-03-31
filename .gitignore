@@ -2,3 +2,5 @@
 *.log
 .env
 data/
+!examples/showcase-movielens/data/
+!examples/showcase-movielens/data/**

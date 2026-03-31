@@ -1,0 +1,14 @@
+apiVersion: duck/v1
+kind: Model
+metadata:
+  name: silver_users
+spec:
+  materialization: TABLE
+  description: Conformed user dimension
+  tags: [silver, movielens]
+  sql: |
+    SELECT
+      user_id,
+      age_group,
+      upper(region) AS region
+    FROM lake.bronze_users
